@@ -1,5 +1,4 @@
-goyo.vim ([고요](http://en.wiktionary.org/wiki/고요하다))
-=========================================================
+# goyo.vim ([고요](http://en.wiktionary.org/wiki/고요하다))
 
 Distraction-free writing in Vim.
 
@@ -9,8 +8,17 @@ Distraction-free writing in Vim.
 
 Best served with [limelight.vim](https://github.com/junegunn/limelight.vim).
 
-Installation
-------------
+## Fork Info
+
+This fork changes:
+
+- No more top/bottom padding. The text will always take the full height of the
+  window. This makes us more robust against window size changes. (e.g. plugging
+  in an external monitor.)
+- `:q` behavior restored. We now actually quit vim, not Goyo. You can always
+  leave Goyo with `:Goyo!`
+
+## Installation
 
 Use your favorite plugin manager.
 
@@ -18,15 +26,14 @@ Use your favorite plugin manager.
   1. Add `Plug 'junegunn/goyo.vim'` to .vimrc
   2. Run `:PlugInstall`
 
-Usage
------
+## Usage
 
 - `:Goyo`
-    - Toggle Goyo
+  - Toggle Goyo
 - `:Goyo [dimension]`
-    - Turn on or resize Goyo
+  - Turn on or resize Goyo
 - `:Goyo!`
-    - Turn Goyo off
+  - Turn Goyo off
 
 The window can be resized with the usual `[count]<CTRL-W>` + `>`, `<`, `+`,
 `-` keys, and `<CTRL-W>` + `=` will resize it back to the initial size.
@@ -54,8 +61,7 @@ Goyo 120x50%
 Goyo 50%+25%x50%-25%
 ```
 
-Configuration
--------------
+## Configuration
 
 - `g:goyo_width` (default: 80)
 - `g:goyo_height` (default: 85%)
@@ -107,14 +113,12 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 More examples can be found here:
 [Customization](https://github.com/junegunn/goyo.vim/wiki/Customization)
 
-Inspiration
------------
+## Inspiration
 
 - [LiteDFM](https://github.com/bilalq/lite-dfm)
 - [VimRoom](http://projects.mikewest.org/vimroom/)
 
-Pros.
------
+## Pros.
 
 1. Works well with splits. Doesn't mess up with the current window arrangement
 1. Works well with popular statusline plugins
@@ -127,8 +131,6 @@ Pros.
 1. Correctly hides colorcolumns and Emojis in statusline
 1. Highly customizable with callbacks
 
-License
--------
+## License
 
 MIT
-

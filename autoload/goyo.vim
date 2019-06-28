@@ -21,8 +21,8 @@
 " OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 " WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-let s:cpo_save = &cpo
-set cpo&vim
+let s:cpo_save = &cpoptions
+set cpoptions&vim
 
 function! s:const(val, min, max)
   return min([max([a:val, a:min]), a:max])
@@ -39,8 +39,9 @@ endfunction
 
 function! s:blank(repel)
   if bufwinnr(t:goyo_pads.r) <= bufwinnr(t:goyo_pads.l) + 1
-    \ || bufwinnr(t:goyo_pads.b) <= bufwinnr(t:goyo_pads.t) + 3
-    call s:goyo_off()
+    " disable top/bottom padding, we always want full height
+    " \ || bufwinnr(t:goyo_pads.b) <= bufwinnr(t:goyo_pads.t) + 3
+    call s:goyo_offquit()
   endif
   execute 'wincmd' a:repel
 endfunction
@@ -49,9 +50,9 @@ function! s:init_pad(command)
   execute a:command
 
   setlocal buftype=nofile bufhidden=wipe nomodifiable nobuflisted noswapfile
-      \ nonu nocursorline nocursorcolumn winfixwidth winfixheight statusline=\ 
+      \ nonu nocursorline nocursorcolumn winfixwidth winfixheight statusline=\
   if exists('&rnu')
-    setlocal nornu
+    setlocal norelativenumber
   endif
   if exists('&colorcolumn')
     setlocal colorcolumn=
@@ -68,7 +69,8 @@ function! s:setup_pad(bufnr, vert, size, repel)
   execute (a:vert ? 'vertical ' : '') . 'resize ' . max([0, a:size])
   augroup goyop
     execute 'autocmd WinEnter,CursorMoved <buffer> nested call s:blank("'.a:repel.'")'
-    autocmd WinLeave <buffer> call s:hide_statusline()
+    " https://github.com/junegunn/goyo.vim/pull/192/files
+    autocmd WinLeave <buffer> call s:hide_statusline() | setlocal norelativenumber
   augroup END
 
   " To hide scrollbars of pad windows in GVim
@@ -94,8 +96,9 @@ function! s:resize_pads()
   let yoff = s:const(t:goyo_dim.yoff, - vmargin, vmargin)
   let top = vmargin + yoff
   let bot = vmargin - yoff - 1
-  call s:setup_pad(t:goyo_pads.t, 0, top, 'j')
-  call s:setup_pad(t:goyo_pads.b, 0, bot, 'k')
+  " disable top/bottom padding, we always want full height
+  " call s:setup_pad(t:goyo_pads.t, 0, top, 'j')
+  " call s:setup_pad(t:goyo_pads.b, 0, bot, 'k')
 
   let nwidth  = max([len(string(line('$'))) + 1, &numberwidth])
   let width   = t:goyo_dim.width + (&number ? nwidth : 0)
@@ -122,14 +125,14 @@ function! s:tranquilize()
 endfunction
 
 function! s:hide_statusline()
-  setlocal statusline=\ 
+  setlocal statusline=\
 endfunction
 
 function! s:hide_linenr()
   if !get(g:, 'goyo_linenr', 0)
-    setlocal nonu
+    setlocal norelativenumber
     if exists('&rnu')
-      setlocal nornu
+      setlocal norelativenumber
     endif
   endif
   if exists('&colorcolumn')
@@ -238,9 +241,9 @@ function! s:goyo_on(dim)
   set laststatus=0
   set showtabline=0
   set noruler
-  set fillchars+=vert:\ 
-  set fillchars+=stl:\ 
-  set fillchars+=stlnc:\ 
+  set fillchars+=vert:\
+  set fillchars+=stl:\
+  set fillchars+=stlnc:\
   set sidescroll=1
   set sidescrolloff=0
 
@@ -252,19 +255,21 @@ function! s:goyo_on(dim)
 
   let t:goyo_pads.l = s:init_pad('vertical topleft new')
   let t:goyo_pads.r = s:init_pad('vertical botright new')
-  let t:goyo_pads.t = s:init_pad('topleft new')
-  let t:goyo_pads.b = s:init_pad('botright new')
+  " disable top/bottom padding, we always want full height
+  " let t:goyo_pads.t = s:init_pad('topleft new')
+  " let t:goyo_pads.b = s:init_pad('botright new')
 
   call s:resize_pads()
   call s:tranquilize()
 
   augroup goyo
     autocmd!
-    autocmd TabLeave    * nested call s:goyo_off()
-    autocmd VimResized  *        call s:resize_pads()
-    autocmd ColorScheme *        call s:tranquilize()
-    autocmd BufWinEnter *        call s:hide_linenr() | call s:hide_statusline()
-    autocmd WinEnter,WinLeave *  call s:hide_statusline()
+    autocmd TabLeave                                   * nested call s:goyo_off()
+    autocmd VimResized                                 *        call s:resize_pads()
+    autocmd ColorScheme                                *        call s:tranquilize()
+    autocmd BufWinEnter                                *        call s:hide_linenr() | call s:hide_statusline()
+    " https://github.com/junegunn/goyo.vim/pull/181/files
+    autocmd WinEnter,WinLeave,BufWriteCmd,FileWriteCmd *        call s:hide_statusline()
     if has('nvim')
       autocmd TermClose * call feedkeys("\<plug>(goyo-resize)")
     endif
@@ -276,6 +281,17 @@ function! s:goyo_on(dim)
   endif
   if exists('#User#GoyoEnter')
     doautocmd User GoyoEnter
+  endif
+endfunction
+
+" via http://makble.com/vim-distraction-free-mode
+function! s:goyo_offquit()
+  let b:quitting_bang = 0
+  cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
+  if b:quitting_bang
+    qa!
+  else
+    qa
   endif
 endfunction
 
@@ -442,6 +458,6 @@ function! goyo#execute(bang, dim)
   end
 endfunction
 
-let &cpo = s:cpo_save
+let &cpoptions = s:cpo_save
 unlet s:cpo_save
 
