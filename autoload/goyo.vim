@@ -50,7 +50,7 @@ function! s:init_pad(command)
   execute a:command
 
   setlocal buftype=nofile bufhidden=wipe nomodifiable nobuflisted noswapfile
-      \ nonu nocursorline nocursorcolumn winfixwidth winfixheight statusline=\
+      \ nonu nocursorline nocursorcolumn winfixwidth winfixheight statusline=\ " intentional empty space
   if exists('&rnu')
     setlocal norelativenumber
   endif
@@ -125,7 +125,7 @@ function! s:tranquilize()
 endfunction
 
 function! s:hide_statusline()
-  setlocal statusline=\
+  setlocal statusline=\ " intentional empty space
 endfunction
 
 function! s:hide_linenr()
@@ -241,9 +241,9 @@ function! s:goyo_on(dim)
   set laststatus=0
   set showtabline=0
   set noruler
-  set fillchars+=vert:\
-  set fillchars+=stl:\
-  set fillchars+=stlnc:\
+  set fillchars+=vert:\ " intentional empty space
+  set fillchars+=stl:\ " intentional empty space
+  set fillchars+=stlnc:\ " intentional empty space
   set sidescroll=1
   set sidescrolloff=0
 
@@ -268,7 +268,7 @@ function! s:goyo_on(dim)
     autocmd VimResized                                 *        call s:resize_pads()
     autocmd ColorScheme                                *        call s:tranquilize()
     autocmd BufWinEnter                                *        call s:hide_linenr() | call s:hide_statusline()
-    " https://github.com/junegunn/goyo.vim/pull/181/files
+    " via https://github.com/junegunn/goyo.vim/pull/181/files
     autocmd WinEnter,WinLeave,BufWriteCmd,FileWriteCmd *        call s:hide_statusline()
     if has('nvim')
       autocmd TermClose * call feedkeys("\<plug>(goyo-resize)")
@@ -288,6 +288,7 @@ endfunction
 function! s:goyo_offquit()
   let b:quitting_bang = 0
   cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
+
   if b:quitting_bang
     qa!
   else
