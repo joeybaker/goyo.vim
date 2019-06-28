@@ -69,8 +69,8 @@ function! s:setup_pad(bufnr, vert, size, repel)
   execute (a:vert ? 'vertical ' : '') . 'resize ' . max([0, a:size])
   augroup goyop
     execute 'autocmd WinEnter,CursorMoved <buffer> nested call s:blank("'.a:repel.'")'
-    " https://github.com/junegunn/goyo.vim/pull/192/files
-    autocmd WinLeave <buffer> call s:hide_statusline() | setlocal norelativenumber
+    " via https://github.com/junegunn/goyo.vim/pull/192/files
+    autocmd WinLeave <buffer> call s:hide_statusline()
   augroup END
 
   " To hide scrollbars of pad windows in GVim
@@ -126,6 +126,7 @@ endfunction
 
 function! s:hide_statusline()
   setlocal statusline=\ " intentional empty space
+  setlocal norelativenumber
 endfunction
 
 function! s:hide_linenr()
