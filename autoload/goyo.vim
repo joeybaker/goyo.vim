@@ -90,12 +90,12 @@ function! s:resize_pads()
   augroup END
 
   let t:goyo_dim.width = s:const(t:goyo_dim.width, 2, &columns)
-  let t:goyo_dim.height = s:const(t:goyo_dim.height, 2, &lines)
+  " let t:goyo_dim.height = s:const(t:goyo_dim.height, 2, &lines)
 
-  let vmargin = max([0, (&lines - t:goyo_dim.height) / 2 - 1])
-  let yoff = s:const(t:goyo_dim.yoff, - vmargin, vmargin)
-  let top = vmargin + yoff
-  let bot = vmargin - yoff - 1
+  " let vmargin = max([0, (&lines - t:goyo_dim.height) / 2 - 1])
+  " let yoff = s:const(t:goyo_dim.yoff, - vmargin, vmargin)
+  " let top = vmargin + yoff
+  " let bot = vmargin - yoff - 1
   " disable top/bottom padding, we always want full height
   " call s:setup_pad(t:goyo_pads.t, 0, top, 'j')
   " call s:setup_pad(t:goyo_pads.b, 0, bot, 'k')
@@ -404,20 +404,20 @@ function! s:relsz(expr, limit)
 endfunction
 
 function! s:parse_arg(arg)
-  if exists('g:goyo_height') || !exists('g:goyo_margin_top') && !exists('g:goyo_margin_bottom')
-    let height = s:relsz(get(g:, 'goyo_height', '85%'), &lines)
-    let yoff = 0
-  else
-    let top = max([0, s:relsz(get(g:, 'goyo_margin_top', 4), &lines)])
-    let bot = max([0, s:relsz(get(g:, 'goyo_margin_bottom', 4), &lines)])
-    let height = &lines - top - bot
-    let yoff = top - bot
-  endif
+  " if exists('g:goyo_height') || !exists('g:goyo_margin_top') && !exists('g:goyo_margin_bottom')
+  "   let height = s:relsz(get(g:, 'goyo_height', '85%'), &lines)
+  "   let yoff = 0
+  " else
+  "   let top = max([0, s:relsz(get(g:, 'goyo_margin_top', 4), &lines)])
+  "   let bot = max([0, s:relsz(get(g:, 'goyo_margin_bottom', 4), &lines)])
+  "   let height = &lines - top - bot
+  "   let yoff = top - bot
+  " endif
 
   let dim = { 'width':  s:relsz(get(g:, 'goyo_width', 80), &columns),
-            \ 'height': height,
-            \ 'xoff':   0,
-            \ 'yoff':   yoff }
+            \ 'xoff':   0 }
+            " \ 'height': height,
+            " \ 'yoff':   yoff }
   if empty(a:arg)
     return dim
   endif
